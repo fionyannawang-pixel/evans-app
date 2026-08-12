@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evan's App · 学习监督工作台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%95%3C/text%3E%3C/svg%3E" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Evan学习" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-bg="nature">
+  <div class="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="logo">🦕</span>
+        <div>
+          <div class="title">Evan's App</div>
+          <div class="sub">学习监督工作台</div>
+        </div>
+      </div>
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-view="home"><span class="ico">🏠</span>首页</button>
+        <button class="nav-item" data-view="checkin"><span class="ico">📅</span>打卡</button>
+        <button class="nav-item" data-view="timer"><span class="ico">⏱️</span>计时</button>
+        <button class="nav-item" data-view="battle"><span class="ico">⚔️</span>挑战</button>
+        <button class="nav-item" data-view="tools"><span class="ico">🛠️</span>工具</button>
+        <button class="nav-item" data-view="read"><span class="ico">📚</span>英语阅读</button>
+        <button class="nav-item" data-view="reward"><span class="ico">🎁</span>奖励</button>
+      </nav>
+      <div class="stars-badge">
+        <span class="big">⭐</span>
+        <span>星星：<b id="starsTotal">0</b></span>
+      </div>
+    </aside>
+
+    <!-- 主内容 -->
+    <main class="main" id="main">
+      <!-- 首页 -->
+      <section class="view active" id="view-home">
+        <div class="view-head">
+          <div>
+            <h1>首页</h1>
+            <p id="homeGreeting">喂养你的恐龙，完成今日任务吧！</p>
+          </div>
+          <button class="btn" id="feedBtn">🍖 喂养恐龙</button>
+        </div>
+
+        <div class="card">
+          <div class="dino-stage">
+            <div class="dino-img" id="homeDino"></div>
+            <div class="dino-name" id="homeDinoName">—</div>
+            <div class="dino-meta" id="homeDinoMeta"></div>
+            <div class="bar sp" style="width:60%;margin-top:6px"><span id="homeSpiritBar" style="width:100%"></span></div>
+            <div class="muted" id="homeSpiritText">精神 100%</div>
+            <button class="btn secondary" id="uploadDinoBtn" style="margin-top:10px;display:none">🖼️ 上传我的恐龙图</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>✅ 今日任务</h2>
+          <div class="task-list" id="taskList"></div>
+          <div class="row mt">
+            <input id="newTaskInput" placeholder="添加新任务，如：背古诗" style="max-width:240px" />
+            <button class="btn secondary" id="addTaskBtn">＋ 添加</button>
+          </div>
+          <p class="muted mt" id="taskProgress"></p>
+        </div>
+      </section>
+
+      <!-- 打卡 -->
+      <section class="view" id="view-checkin">
+        <div class="view-head">
+          <div><h1>打卡</h1><p>每天打卡随机获得 1~5 颗星星</p></div>
+          <button class="btn" id="checkinBtn">✅ 今日打卡</button>
+        </div>
+        <div class="card">
+          <div class="cal-head">
+            <button class="btn ghost" id="calPrev">‹ 上月</button>
+            <b id="calTitle">—</b>
+            <button class="btn ghost" id="calNext">下月 ›</button>
+          </div>
+          <div class="calendar" id="calendar"></div>
+          <p class="muted mt" id="checkinStats"></p>
+        </div>
+      </section>
+
+      <!-- 计时 -->
+      <section class="view" id="view-timer">
+        <div class="view-head">
+          <div><h1>计时</h1><p>自定义时长，支持一次设置多个计时</p></div>
+        </div>
+        <div class="card">
+          <h2>⏱️ 新建计时</h2>
+          <div class="preset-btns" id="presetBtns">
+            <button class="btn ghost" data-min="180">3 小时</button>
+            <button class="btn ghost" data-min="60">1 小时</button>
+            <button class="btn ghost" data-min="45">45 分钟</button>
+            <button class="btn ghost" data-min="30">30 分钟</button>
+            <button class="btn ghost" data-min="25">25 分钟</button>
+          </div>
+          <div class="row mt">
+            <div style="flex:1;min-width:160px"><label class="field">自定义（分钟）</label><input type="number" id="customMin" min="1" placeholder="例如 90" /></div>
+            <div style="flex:1;min-width:160px"><label class="field">标签（可选）</label><input id="timerLabel" placeholder="例如 数学作业" /></div>
+            <div style="align-self:flex-end"><button class="btn" id="addTimerBtn">＋ 添加计时</button></div>
+          </div>
+          <p class="muted mt">提示：可以添加多个计时一起开始，例如「3 小时 + 1 小时」。</p>
+        </div>
+        <div class="card">
+          <h2>📋 我的计时</h2>
+          <div class="timer-list" id="timerList"></div>
+        </div>
+      </section>
+
+      <!-- 挑战 -->
+      <section class="view" id="view-battle">
+        <div class="view-head">
+          <div><h1>挑战 · 恐龙对战</h1><p id="battleSub">Lv.2 后解锁与 AI 恐龙的对战</p></div>
+        </div>
+        <div class="card" id="battleLockedCard">
+          <div class="center">
+            <div style="font-size:48px">🔒</div>
+            <p>你的恐龙需要达到 <b>Lv.2</b> 才能参加对战。</p>
+            <p class="muted">继续喂养，第 7 天自动升级到 Lv.2！</p>
+          </div>
+        </div>
+
+        <div class="card" id="battleReadyCard" style="display:none">
+          <div class="battle-arena">
+            <div class="fighter">
+              <div class="av" id="myFighter"></div>
+              <div><b id="myFighterName">我方</b></div>
+              <div class="muted" id="myFighterSpirit"></div>
+            </div>
+            <div class="vs">⚔️</div>
+            <div class="fighter">
+              <div class="av" id="foeFighter"></div>
+              <div><b id="foeFighterName">对手</b></div>
+              <div class="muted">AI 恐龙</div>
+            </div>
+          </div>
+          <div class="q-box mt" id="battleQBox">
+            <p class="muted">每次对战消耗 <b>5 ⭐</b> 和 <b>20%</b> 精神；胜利获得 <b>15 ⭐</b>。</p>
+            <button class="btn" id="startBattleBtn">开始对战</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📜 对战记录</h2>
+          <div id="battleLog" class="muted">暂无记录</div>
+        </div>
+      </section>
+
+      <!-- 工具 -->
+      <section class="view" id="view-tools">
+        <div class="view-head">
+          <div><h1>工具</h1><p>个性化你的工作台</p></div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h2>👤 个人资料</h2>
+            <div class="row between">
+              <div class="avatar-box" id="avatarBox">🧒</div>
+              <div class="row">
+                <button class="btn ghost" id="uploadAvatarBtn">上传头像</button>
+                <button class="btn danger" id="removeAvatarBtn">清除</button>
+              </div>
+            </div>
+            <label class="field">昵称</label>
+            <input id="nicknameInput" />
+            <button class="btn mt" id="saveProfileBtn">保存资料</button>
+          </div>
+
+          <div class="card">
+            <h2>🎨 主题与背景</h2>
+            <label class="field">主题主色（浅蓝系）</label>
+            <div class="swatches" id="primarySwatches"></div>
+            <label class="field">主题辅色（浅黄系）</label>
+            <div class="swatches" id="secondarySwatches"></div>
+            <label class="field">背景</label>
+            <div class="row">
+              <button class="btn ghost" data-bg="nature">自然（草地/天空）</button>
+              <button class="btn ghost" data-bg="solid">纯色</button>
+              <button class="btn ghost" id="uploadBgBtn">上传背景图</button>
+            </div>
+            <label class="field">纯色背景（选「纯色」时生效）</label>
+            <input type="color" id="bgColorInput" />
+          </div>
+        </div>
+        <div class="card">
+          <h2>⚠️ 数据管理</h2>
+          <div class="row">
+            <button class="btn danger" id="resetBtn">重置全部数据</button>
+            <span class="muted">清空后将重新选择恐龙。</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 英语阅读 -->
+      <section class="view" id="view-read">
+        <div class="view-head">
+          <div><h1>英语阅读</h1><p>加拿大一年级 / 二年级分级绘本</p></div>
+          <div class="row">
+            <button class="btn ghost" data-level="1">一年级 (100)</button>
+            <button class="btn ghost" data-level="2">二年级 (100)</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row between">
+            <h2 id="shelfTitle">📚 一年级绘本 <span class="tag" id="shelfStat"></span></h2>
+            <input id="bookSearch" placeholder="搜索书名…" style="max-width:220px" />
+          </div>
+          <div class="row mt" id="shelfFilter" style="gap:8px">
+            <button class="btn ghost active" data-f="all">全部</button>
+            <button class="btn ghost" data-f="unread">未读</button>
+            <button class="btn ghost" data-f="read">已读</button>
+          </div>
+          <div class="book-shelf" id="bookShelf" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <!-- 奖励 -->
+      <section class="view" id="view-reward">
+        <div class="view-head">
+          <div><h1>奖励</h1><p>用星星兑换你自定义的奖励</p></div>
+          <button class="btn secondary" id="addRewardBtn">＋ 新增奖励</button>
+        </div>
+        <div class="card">
+          <h2>🎁 奖励货架</h2>
+          <div class="reward-grid" id="rewardGrid"></div>
+        </div>
+        <div class="card">
+          <h2>🧾 兑换记录</h2>
+          <div id="redeemLog" class="muted">暂无兑换</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 首次领养向导 -->
+  <div class="modal-mask" id="adoptMask" style="display:none">
+    <div class="modal">
+      <h2>🥚 欢迎来到 Evan's App！</h2>
+      <p class="muted">先选一只你心仪的恐龙，把它养大，未来还能和其它恐龙对战。</p>
+      <div class="dino-pick" id="dinoPick"></div>
+      <label class="field">给你的恐龙起个名字</label>
+      <input id="dinoNameInput" placeholder="例如：小绿" />
+      <div class="row mt between">
+        <span class="muted" id="adoptHint"></span>
+        <button class="btn" id="confirmAdoptBtn" disabled>领养这只恐龙</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 孵化弹窗 -->
+  <div class="modal-mask" id="hatchMask" style="display:none">
+    <div class="modal" style="width:420px;text-align:center">
+      <div id="hatchDino" style="width:150px;height:150px;margin:0 auto"></div>
+      <h2 id="hatchTitle">🐣 你的小恐龙孵化啦！</h2>
+      <p id="hatchText" class="muted">破壳而出～上传你喜欢的恐龙图来认养它吧！</p>
+      <div class="row mt" style="justify-content:center">
+        <button class="btn secondary" id="hatchUploadBtn">🖼️ 上传恐龙图</button>
+        <button class="btn ghost" id="hatchCloseBtn">稍后再说</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 去世弹窗 -->
+  <div class="modal-mask" id="deceasedMask" style="display:none">
+    <div class="modal" style="width:420px;text-align:center">
+      <div style="font-size:54px">🪦</div>
+      <h2>💤 恐龙安息了</h2>
+      <p id="deceasedText" class="muted">它陪伴你走到了 Lv.50，光荣退役啦。领养一只新恐龙，开启新的旅程吧！</p>
+      <div class="row mt" style="justify-content:center">
+        <button class="btn" id="reAdoptBtn">🥚 领养新恐龙</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 阅读器 -->
+  <div class="modal-mask" id="readerMask" style="display:none">
+    <div class="modal" style="width:560px">
+      <div class="reader">
+        <h2 id="readerTitle" style="text-align:center"></h2>
+        <div class="page" id="readerPage"></div>
+        <div class="nav">
+          <button class="btn ghost" id="readerPrev">‹ 上一页</button>
+          <span class="muted" id="readerCount"></span>
+          <button class="btn ghost" id="readerNext">下一页 ›</button>
+        </div>
+        <div class="center mt">
+          <button class="btn" id="readerDone" style="display:none">✅ 完成阅读（记录已读）</button>
+          <button class="btn danger" id="readerClose">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <input type="file" id="avatarFile" class="hidden-file" accept="image/*" />
+  <input type="file" id="bgFile" class="hidden-file" accept="image/*" />
+  <input type="file" id="dinoFile" class="hidden-file" accept="image/*" />
+
+  <script src="js/store.js"></script>
+  <script src="js/dinos.js"></script>
+  <script src="js/battle.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
