@@ -94,6 +94,11 @@
     if (!d.adopted) {
       $('#adoptMask').style.display = 'flex'
       renderDinoPick()
+      // iOS standalone 全屏模式下，弹窗内 input 需手动聚焦才会弹键盘
+      setTimeout(() => {
+        const inp = $('#dinoNameInput')
+        if (inp) { inp.focus(); inp.click && inp.click() }
+      }, 300)
     }
   }
 
